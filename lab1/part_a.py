@@ -27,7 +27,7 @@ def start():
     lines = read_json(f'{runtime_dir}/signal-news1.jsonl', lines=True)['content']
 
     pattern_alphanumeric = re.compile(r'[^a-zA-Z0-9 ]')
-    pattern_only_one_char = re.compile(r'\b[a-zA-Z]\b')
+    pattern_only_one_char = re.compile(r'\b[a-zA-Z0-9]\b')
     pattern_fully_numeric = re.compile(r'\b\d+\b')
     pattern_url = re.compile(
         r'^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b[-a-zA-Z0-9()@:%_\\+.~#?&/=]*'
