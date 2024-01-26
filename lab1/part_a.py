@@ -26,11 +26,17 @@ def lemmatize_text(src: str, /) -> str:
 def start():
     lines = read_json(f'{runtime_dir}/signal-news1.jsonl', lines=True)['content']
 
-    pattern_alphanumeric = re.compile(r'[^a-zA-Z0-9 ]')
-    pattern_only_one_char = re.compile(r'\b[a-zA-Z0-9]\b')
-    pattern_fully_numeric = re.compile(r'\b\d+\b')
+    pattern_alphanumeric = re.compile(r'[^a-zA-Z0-9 ]', re.IGNORECASE | re.MULTILINE)
+    pattern_only_one_char = re.compile(r'\b[a-zA-Z0-9]\b', re.IGNORECASE | re.MULTILINE)
+    pattern_fully_numeric = re.compile(r'\b\d+\b', re.IGNORECASE | re.MULTILINE)
     pattern_url = re.compile(
-        r'^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b[-a-zA-Z0-9()@:%_\\+.~#?&/=]*'
+        r'^(?:[a-zA-Z][a-zA-Z0-9+-.]*:)?'
+        r'(//(?:[a-zA-Z0-9-._~%!$&\'()*+,;=:]*(?::[a-zA-Z0-9-._~%!$&\'()*+,;=:]+)?@)?'
+        r'(?:\[[0-9a-fA-F:.]+]|(?:[a-zA-Z0-9-]+\.)*[a-zA-Z]{2,}|[0-9.]+|localhost)'
+        r'(?::\d+)?)(/[a-zA-Z0-9-._~%!$&\'()*+,;=:@]*/?)*'
+        r'(?:\?[a-zA-Z0-9-._~%!$&\'()*+,;=:@/]*)?'
+        r'(?:#[a-zA-Z0-9-._~%!$&\'()*+,;=:@/]*)?',
+        re.IGNORECASE | re.MULTILINE
     )
 
     patterns = (
