@@ -12,6 +12,7 @@
 
 from collections import Counter
 from collections.abc import Sequence
+from pprint import pprint
 from re import findall
 
 from utils.files import read_file_lines_from
@@ -21,7 +22,7 @@ def tokenize_of(string: str) -> tuple[int, [str]]:
     return len(tokens := findall(r'\w+', string)), tokens
 
 
-def vocabulary_size_of(tokens: Sequence[str]) -> tuple[int, dict[str, int]]:
+def vocabulary_size_of(tokens: Sequence[str]) -> tuple[int, Counter[str]]:
     counter = Counter(tokens)
     return len(counter), counter
 
@@ -29,22 +30,14 @@ def vocabulary_size_of(tokens: Sequence[str]) -> tuple[int, dict[str, int]]:
 def start():
     raw_file_lines = read_file_lines_from('processed_text_part_a.txt')
 
-    total_num_of_tokens = 0
-    total_vocab_size = 0
-    total_vocab = Counter()
-
-    for line in raw_file_lines:
-        token_num, tokens = tokenize_of(line)
-        vocab_size, vocab = vocabulary_size_of(tokens)
-
-        total_num_of_tokens += token_num
-        total_vocab_size += vocab_size
-
-        total_vocab += vocab
+    very_long_single_line = ' '.join(raw_file_lines)
+    total_num_of_tokens, tokens = tokenize_of(very_long_single_line)
+    total_vocab_size, total_vocab = vocabulary_size_of(tokens)
 
     print(f'N: {total_num_of_tokens}')
     print(f'V: {total_vocab_size}')
-    print(f'Top 25 trigrams: {total_vocab.most_common(25)}')
+    print(f'Top 25 trigrams: ')
+    pprint(total_vocab.most_common(25))
 
 
 if __name__ == '__main__':
