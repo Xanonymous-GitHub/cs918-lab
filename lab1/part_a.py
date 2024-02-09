@@ -29,6 +29,8 @@ def start():
     pattern_alphanumeric = re.compile(r'[^a-zA-Z0-9 ]', re.IGNORECASE | re.MULTILINE)
     pattern_only_one_char = re.compile(r'\b[a-zA-Z0-9]\b', re.IGNORECASE | re.MULTILINE)
     pattern_fully_numeric = re.compile(r'\b\d+\b', re.IGNORECASE | re.MULTILINE)
+    
+    # FIXME: What happened when the URL is not valid? for example, when it not have a protocol...
     pattern_url = re.compile(
         r'^(?:[a-zA-Z][a-zA-Z0-9+-.]*:)?'
         r'(//(?:[a-zA-Z0-9-._~%!$&\'()*+,;=:]*(?::[a-zA-Z0-9-._~%!$&\'()*+,;=:]+)?@)?'
@@ -39,11 +41,16 @@ def start():
         re.IGNORECASE | re.MULTILINE
     )
 
+    # The order of the patterns is important.
+    # First we remove the URLs
+    # then the fully numeric words,
+    # then the single character words,
+    # and finally the non-alphanumeric characters.
     patterns = (
-        pattern_alphanumeric,
-        pattern_only_one_char,
-        pattern_fully_numeric,
         pattern_url,
+        pattern_fully_numeric,
+        pattern_only_one_char,
+        pattern_alphanumeric,
     )
 
     filtered_lines = [filter_text(line.lower(), patterns=patterns) for line in lines]
