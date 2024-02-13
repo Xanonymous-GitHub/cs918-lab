@@ -10,49 +10,101 @@
 # (same number of positive and negative words) should not be counted.
 
 
+import asyncio
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
+from copy import copy
 from pprint import pprint
 from re import findall
+from typing import Any, Generator
 
-from nltk import trigrams
-from nltk.corpus import PlaintextCorpusReader
+from nltk import trigrams, FreqDist
+from nltk.downloader import download as nltk_download
+from nltk.tokenize import WhitespaceTokenizer
 
 from utils.files import runtime_dir
 
 
-def tokenize_of(string: str) -> tuple[int, [str]]:
-    return len(tokens := findall(r'\w+', string)), tokens
+def get_text_from_file(file_path: str) -> str:
+    with open(file_path, 'r') as file:
+        return file.read().lower()
+
+
+def get_tokens_by_regexp_from_text(text: str) -> [str]:
+    return findall(r'\w+', text)
 
 
 def is_positive(string: str) -> bool:
     return string in ('positive', 'positive\n')
 
 
-def start_nltk():
-    corpus = PlaintextCorpusReader(runtime_dir, r'\w+\.txt')
+def get_tokens_from_text(text: str) -> Generator[str, Any, None]:
+    # Performance: Use low-level function instead of word_tokenize.
+    # return Generator instead of List to save memory and save time.
+    spans = WhitespaceTokenizer().span_tokenize(text)
+    return (text[begin: end] for (begin, end) in spans)
 
-    # Token size
-    words = corpus.words()
-    print(f'Token Size: {len(words)}')
 
-    # Vocabulary size
-    total_vocab = Counter(words)
-    print(f'Vocabulary Size: {total_vocab.__len__()}')
+def analyze_tokens_from(tokens: [str]) -> FreqDist[str]:
+    fd = FreqDist()
+    for token in tokens:
+        fd[token] += 1
+    return fd
 
-    # Top 25 trigrams
-    trigram = trigrams(words)
-    print('Top 25 Trigrams: ', end='')
-    pprint(Counter(trigram).most_common(25))
 
-    positive_words = frozenset(corpus.words(f'{runtime_dir}/positive-words.txt'))
-    negative_words = frozenset(corpus.words(f'{runtime_dir}/negative-words.txt'))
+async def start_nltk():
+    file_path = f'{runtime_dir}/processed_text_part_a.txt'
+    text = get_text_from_file(file_path)
 
-    print(len(positive_words))
-    print(len(negative_words))
+    tokens = get_tokens_by_regexp_from_text(text)
+
+    def show_token_analysis(tokens_: Generator):
+        token_analysis = analyze_tokens_from(tokens_)
+
+        # Token size
+        print(f'Token Size: {token_analysis.N()}')
+
+        # Vocabulary size
+        print(f'Vocabulary Size: {token_analysis.B()}')
+
+    def show_trigrams(tokens_: Generator):
+        trigram = trigrams(tokens_)
+        most_common_trigrams = Counter(trigram).most_common(25)
+        print('Top 25 Trigrams: ')
+        pprint(most_common_trigrams)
+
+    def count_positive_negative_words():
+        positive_words = frozenset(
+            get_tokens_by_regexp_from_text(
+                get_text_from_file(f'{runtime_dir}/positive-words.txt')
+            )
+        )
+        negative_words = frozenset(
+            get_tokens_by_regexp_from_text(
+                get_text_from_file(f'{runtime_dir}/negative-words.txt')
+            )
+        )
+
+        print(f'There are {len(positive_words)} positive words')
+        print(f'There are {len(negative_words)} negative words')
+
+    with ThreadPoolExecutor() as executor:
+        loop = asyncio.get_event_loop()
+
+        # Note: We need to copy the tokens because the generator used in other functions
+        # Ensure this step is done before the other functions are called.
+        cloned_tokens = copy(tokens)
+
+        await asyncio.gather(
+            loop.run_in_executor(executor, show_token_analysis, tokens),
+            loop.run_in_executor(executor, show_trigrams, cloned_tokens),
+            loop.run_in_executor(executor, count_positive_negative_words)
+        )
 
 
 if __name__ == '__main__':
     try:
-        start_nltk()
+        nltk_download('punkt')
+        asyncio.run(start_nltk())
     except KeyboardInterrupt:
         pass
