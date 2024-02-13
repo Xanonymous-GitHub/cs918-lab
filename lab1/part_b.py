@@ -11,37 +11,48 @@
 
 
 from collections import Counter
-from collections.abc import Sequence
 from pprint import pprint
 from re import findall
 
-from utils.files import read_file_lines_from
+from nltk import trigrams
+from nltk.corpus import PlaintextCorpusReader
+
+from utils.files import runtime_dir
 
 
 def tokenize_of(string: str) -> tuple[int, [str]]:
     return len(tokens := findall(r'\w+', string)), tokens
 
 
-def vocabulary_size_of(tokens: Sequence[str]) -> tuple[int, Counter[str]]:
-    counter = Counter(tokens)
-    return len(counter), counter
+def is_positive(string: str) -> bool:
+    return string in ('positive', 'positive\n')
 
 
-def start():
-    raw_file_lines = read_file_lines_from('processed_text_part_a.txt')
+def start_nltk():
+    corpus = PlaintextCorpusReader(runtime_dir, r'\w+\.txt')
 
-    very_long_single_line = ' '.join(raw_file_lines)
-    total_num_of_tokens, tokens = tokenize_of(very_long_single_line)
-    total_vocab_size, total_vocab = vocabulary_size_of(tokens)
+    # Token size
+    words = corpus.words()
+    print(f'Token Size: {len(words)}')
 
-    print(f'N: {total_num_of_tokens}')
-    print(f'V: {total_vocab_size}')
-    print(f'Top 25 trigrams: ')
-    pprint(total_vocab.most_common(25))
+    # Vocabulary size
+    total_vocab = Counter(words)
+    print(f'Vocabulary Size: {total_vocab.__len__()}')
+
+    # Top 25 trigrams
+    trigram = trigrams(words)
+    print('Top 25 Trigrams: ', end='')
+    pprint(Counter(trigram).most_common(25))
+
+    positive_words = frozenset(corpus.words(f'{runtime_dir}/positive-words.txt'))
+    negative_words = frozenset(corpus.words(f'{runtime_dir}/negative-words.txt'))
+
+    print(len(positive_words))
+    print(len(negative_words))
 
 
 if __name__ == '__main__':
     try:
-        start()
+        start_nltk()
     except KeyboardInterrupt:
         pass
