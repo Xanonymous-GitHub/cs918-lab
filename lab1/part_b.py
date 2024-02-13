@@ -34,10 +34,6 @@ def get_tokens_by_regexp_from_text(text: str) -> [str]:
     return findall(r'\w+', text)
 
 
-def is_positive(string: str) -> bool:
-    return string in ('positive', 'positive\n')
-
-
 def get_tokens_from_text(text: str) -> Generator[str, Any, None]:
     # Performance: Use low-level function instead of word_tokenize.
     # return Generator instead of List to save memory and save time.
@@ -45,7 +41,7 @@ def get_tokens_from_text(text: str) -> Generator[str, Any, None]:
     return (text[begin: end] for (begin, end) in spans)
 
 
-def analyze_tokens_from(tokens: [str]) -> FreqDist[str]:
+def analyze_tokens_from(tokens: Generator) -> FreqDist[str]:
     fd = FreqDist()
     for token in tokens:
         fd[token] += 1
@@ -73,32 +69,37 @@ async def start_nltk():
         print('Top 25 Trigrams: ')
         pprint(most_common_trigrams)
 
-    def count_positive_negative_words():
+    def count_positive_words(tokens_: Generator):
         positive_words = frozenset(
             get_tokens_by_regexp_from_text(
                 get_text_from_file(f'{runtime_dir}/positive-words.txt')
             )
         )
+
+        positive_words_count = sum(1 for token in tokens_ if token in positive_words)
+        print(f'There are {positive_words_count} positive words in the corpus.')
+
+    def count_negative_words(tokens_: Generator):
         negative_words = frozenset(
             get_tokens_by_regexp_from_text(
                 get_text_from_file(f'{runtime_dir}/negative-words.txt')
             )
         )
 
-        print(f'There are {len(positive_words)} positive words')
-        print(f'There are {len(negative_words)} negative words')
+        negative_words_count = sum(1 for token in tokens_ if token in negative_words)
+        print(f'There are {negative_words_count} negative words in the corpus.')
 
     with ThreadPoolExecutor() as executor:
         loop = asyncio.get_event_loop()
 
         # Note: We need to copy the tokens because the generator used in other functions
         # Ensure this step is done before the other functions are called.
-        cloned_tokens = copy(tokens)
 
         await asyncio.gather(
             loop.run_in_executor(executor, show_token_analysis, tokens),
-            loop.run_in_executor(executor, show_trigrams, cloned_tokens),
-            loop.run_in_executor(executor, count_positive_negative_words)
+            loop.run_in_executor(executor, show_trigrams, copy(tokens)),
+            loop.run_in_executor(executor, count_positive_words, copy(tokens)),
+            loop.run_in_executor(executor, count_negative_words, copy(tokens)),
         )
 
 
