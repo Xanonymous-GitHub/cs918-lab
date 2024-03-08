@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Start_Jupyter",
+            "command": "${workspaceFolder}/start_remote_jupyter.sh",
+            "problemMatcher": [],
+            "group": {
+                "kind": "none",
+                "isDefault": true
+            }
+        }
+    ]
+}
