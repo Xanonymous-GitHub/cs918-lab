@@ -26,4 +26,4 @@ poetry env use "$PYTHON_VERSION"
 # Install dependencies.
 poetry install
 
-poetry run jupyter lab --no-browser --port=8888
+poetry run jupyter lab --no-browser --port=8888 --NotebookApp.token='' --NotebookApp.password='' &
