@@ -3,6 +3,20 @@
         "ms-vscode-remote.remote-ssh",
         "ms-vscode.remote-explorer",
         "ms-python.python",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "ms-toolsai.jupyter-renderers",
+        "ms-toolsai.jupyter-keymap",
+        "ms-toolsai.jupyter",
+        "ms-toolsai.vscode-jupyter-slideshow",
+        "ms-toolsai.vscode-jupyter-cell-tags",
+        "ms-toolsai.vscode-jupyter-powertoys",
+        "ms-toolsai.jupyter-hub",
+        "ms-toolsai.tensorboard",
+        "ms-python.gather",
+        "sbsnippets.pytorch-snippets",
+        "formulahendry.auto-close-tag",
+        "ms-python.pylint",
+        "ms-python.vscode-pylance",
+        "ms-python.autopep8"
     ]
 }
