@@ -328,7 +328,7 @@ dmypy.json
 cython_debug/
 
 # data files
-*.zip
+**/data/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
