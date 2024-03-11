@@ -24,6 +24,7 @@ torchvision = "^0.17.1"
 
 [tool.poetry.group.dev.dependencies]
 notebook = "^7.0.8"
+jupyter = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]
