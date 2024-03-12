@@ -22,6 +22,7 @@ pickleshare = "^0.7.5"
 torch = "^2.2.1"
 torchvision = "^0.17.1"
 spacy = {extras = ["cuda12x"], version = "^3.7.4"}
+emoji = "^2.10.1"
 
 [tool.poetry.group.dev.dependencies]
 notebook = "^7.0.8"
