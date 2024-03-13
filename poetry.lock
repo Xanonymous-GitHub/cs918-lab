@@ -1455,6 +1455,20 @@ files = [
 data = ["language-data (>=1.1,<2.0)"]
 
 [[package]]
+name = "langdetect"
+version = "1.0.9"
+description = "Language detection library ported from Google's language-detection."
+optional = false
+python-versions = "*"
+files = [
+    {file = "langdetect-1.0.9-py2-none-any.whl", hash = "sha256:7cbc0746252f19e76f77c0b1690aadf01963be835ef0cd4b56dddf2a8f1dfc2a"},
+    {file = "langdetect-1.0.9.tar.gz", hash = "sha256:cbc1fef89f8d062739774bd51eda3da3274006b3661d199c2655f6b3f6d605a0"},
+]
+
+[package.dependencies]
+six = "*"
+
+[[package]]
 name = "markupsafe"
 version = "2.1.5"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -4337,4 +4351,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12 <3.13"
-content-hash = "ffd9a56fc5cc3d5069c664026ca10d7d22bdefad3d5e1bfb94993dad2c97fc47"
+content-hash = "e30853a610974c6b5eb0cedf58b69fe958524a2384f99af35d24ad0ab96c74c6"
