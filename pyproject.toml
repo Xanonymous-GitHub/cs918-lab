@@ -26,6 +26,7 @@ emoji = "^2.10.1"
 regex = "^2023.12.25"
 contractions = "^0.1.73"
 langdetect = "^1.0.9"
+tqdm = "^4.66.2"
 
 [tool.poetry.group.dev.dependencies]
 notebook = "^7.0.8"
