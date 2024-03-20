@@ -330,6 +330,8 @@ cython_debug/
 # data files
 **/data/
 *.db
+*.cleaned
+*.model
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
