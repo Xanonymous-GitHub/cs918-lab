@@ -26,6 +26,8 @@ contractions = "^0.1.73"
 langdetect = "^1.0.9"
 tqdm = "^4.66.2"
 matplotlib = "^3.8.3"
+fasttext-wheel = "^0.9.2"
+skops = "^0.9.0"
 
 [tool.poetry.group.dev.dependencies]
 notebook = "^7.0.8"
